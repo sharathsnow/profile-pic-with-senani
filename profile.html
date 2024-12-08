@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Picture Maker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      max-width: 1200px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-container {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #ffffff;
+      position: relative;
+    }
+
+    canvas {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      width: 70%;
+      height: auto;
+    }
+
+    .options {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+      background: #f9f9fc;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .options h2 {
+      font-size: 1.5rem;
+      color: #444;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .options input[type="file"],
+    .options input[type="text"],
+    .options button {
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .options button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .options button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Image Container -->
+    <div class="image-container">
+      <!-- Canvas to display the profile picture -->
+      <canvas id="canvas" width="1080" height="1080"></canvas>
+    </div>
+
+    <!-- Options Panel -->
+    <div class="options">
+      <h2>Profile Picture Maker</h2>
+      <!-- File input to upload the image -->
+      <input type="file" id="imageInput" accept="image/*" />
+      <!-- Text input for overlay text -->
+      <input type="text" id="textInput" placeholder="Enter text to overlay" maxlength="18" />
+      <!-- Button to download the image -->
+      <button id="downloadButton" style="display: none;">Download Image</button>
+    </div>
+  </div>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const textInput = document.getElementById('textInput');
+    const canvas = document.getElementById('canvas');
+    const downloadButton = document.getElementById('downloadButton');
+    const ctx = canvas.getContext('2d');
+
+    let existingImage = new Image();
+    let uploadedImage = new Image();
+
+    // Set canvas dimensions
+    const canvasWidth = 1080;
+    const canvasHeight = 1080;
+
+    // Load existing image (Replace with actual image path or URL)
+    // existingImage.src = 'https://i.imghippo.com/files/qy8759Nk.jpg'; 
+    existingImage.src = 'sample.jpg'; 
+
+    existingImage.onload = () => {
+      ctx.drawImage(existingImage, 0, 0, canvasWidth, canvasHeight);
+    };
+
+    // Handle uploaded image
+    imageInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Draw uploaded image and overlay text
+    uploadedImage.onload = () => {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      ctx.drawImage(existingImage, 0, 0, canvasWidth, canvasHeight);
+
+// Overlay uploaded image with 1px adjustments
+const overlayX = 720 + 3;  // Move 3px to the right
+const overlayY = 608 + 8;  // Move 8px down
+const overlayWidth = 304 + 1;  // Increase width by 1px
+const overlayHeight = 366 + 1;  // Increase height by 1px
+
+ctx.drawImage(uploadedImage, overlayX, overlayY, overlayWidth, overlayHeight);
+
+
+      drawTextOverlay();
+      downloadButton.style.display = 'inline-block';
+    };
+
+    // Draw text overlay
+    function drawTextOverlay() {
+      const text = textInput.value.slice(0, 18);
+      ctx.font = '60px Arial';
+      ctx.fillStyle = 'rgba(255, 255, 71, 1)';
+      ctx.textAlign = 'center';
+      ctx.fillText(text, canvasWidth / 2, canvasHeight - 20);
+    }
+
+    textInput.addEventListener('input', () => {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      ctx.drawImage(existingImage, 0, 0, canvasWidth, canvasHeight);
+
+      if (uploadedImage.src) {
+        const overlayX = 725;
+        const overlayY = 616;
+        const overlayWidth = 300;
+        const overlayHeight = 370;
+        ctx.drawImage(uploadedImage, overlayX, overlayY, overlayWidth, overlayHeight);
+      }
+
+      drawTextOverlay();
+    });
+
+    // Download the image
+    downloadButton.addEventListener('click', () => {
+      const dataURL = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'profile_picture.png';
+      link.click();
+    });
+  </script>
+</body>
+</html>
