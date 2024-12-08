@@ -124,7 +124,7 @@
 
     // Load existing image (Replace with actual image path or URL)
     // existingImage.src = 'https://i.imghippo.com/files/qy8759Nk.jpg'; 
-    existingImage.src = 'sample.jpg'; 
+    existingImage.src = 'image.jpg'; 
 
     existingImage.onload = () => {
       ctx.drawImage(existingImage, 0, 0, canvasWidth, canvasHeight);
@@ -161,13 +161,27 @@ ctx.drawImage(uploadedImage, overlayX, overlayY, overlayWidth, overlayHeight);
     };
 
     // Draw text overlay
+    // function drawTextOverlay() {
+    //   const text = textInput.value.slice(0, 18);
+    //   ctx.font = '60px Arial';
+    //   ctx.fillStyle = 'rgba(255, 255, 71, 1)';
+    //   ctx.textAlign = 'center';
+    //   ctx.fillText(text, canvasWidth / 2, canvasHeight - 20);
+    // }
+    // Draw overlay text on the canvas
     function drawTextOverlay() {
-      const text = textInput.value.slice(0, 18);
-      ctx.font = '60px Arial';
-      ctx.fillStyle = 'rgba(255, 255, 71, 1)';
-      ctx.textAlign = 'center';
-      ctx.fillText(text, canvasWidth / 2, canvasHeight - 20);
-    }
+            let text = textInput.value.slice(0, 18); // Limit text to 12 characters
+            if (text) {
+                ctx.font = '50px Anek Telugu';
+                // ctx.fillStyle = 'rgba(255, 255, 71, 1)';
+                ctx.fillStyle = 'red';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const x = canvasWidth / 2;
+                const y = canvasHeight - 60;
+                ctx.fillText(text, 280, 1045);
+            }
+        }
 
     textInput.addEventListener('input', () => {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
